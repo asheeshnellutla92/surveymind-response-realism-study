@@ -1,0 +1,23 @@
+The Dashboard That Lied — Seeing Is Not Doing
+
+From Chapter 1 of Bear's Living Models book. A dashboard shows 18 percent growth and none of it is real — not because anyone lied, but because a silent refresh failure shrank the denominator and the instrument drifted in the direction that felt like good news. Then the same failure at catastrophic scale: J.C. Penney's numbers were true, the inference was wrong, and $4.3 billion followed it down. The gap between them has a name — P(Y|X) versus P(Y|do(X)), Judea Pearl's do-operator — and a shape: Pearl's Ladder, where no rung is reachable by piling up more data on the rung below. The episode closes with what the book is building toward: Living Models — causal, counterfactual, continually updated, treatment-oriented — and observability, the instrument that verifies itself.
+
+Narrated by Liam, in for Bear.
+
+Chapters:
+0:00 Cold open — the ask
+0:16 Act I — The Green Line (the chapter's teaching case)
+1:19 Act II — The $4.3 Billion Inference (J.C. Penney)
+2:24 Act III — Seeing v. Doing (the do-operator)
+3:23 Act IV — Pearl's Ladder (no elevator)
+4:14 Act V — Silent Failures (concept drift, Knight Capital, parallel ladders)
+5:37 Act VI — Living Models (four properties, observability)
+6:33 Recap — seeing is not doing
+6:54 Your turn — the loyalty program case
+
+Your turn — paste this into Claude:
+My team reports a strong positive correlation between loyalty program membership and average order value, and leadership proposes expanding the program to all segments. (1) Construct two causal stories consistent with the correlation — one where the program causes higher spending, one where a pre-existing difference between joiners and non-joiners drives both. (2) Draw the causal graph for each. (3) Name two specific pieces of data that would distinguish them empirically. (4) Express the analysis as P(Y|X) versus P(Y|do(X)), and state what it implies for the proposed budget decision.
+
+Read the full chapter: skepticism.ai — "Chapter 1: The Dashboard That Lied"
+Series: Computational Skepticism for AI
+@NikBearBrown

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "B00",
+    "frames": 487,
+    "audio": "claude-linkedin-mp3/beat-B00.mp3"
+  },
+  {
+    "id": "B01",
+    "frames": 597,
+    "audio": "claude-linkedin-mp3/beat-B01.mp3"
+  },
+  {
+    "id": "B02",
+    "frames": 882,
+    "audio": "claude-linkedin-mp3/beat-B02.mp3"
+  },
+  {
+    "id": "B03",
+    "frames": 865,
+    "audio": "claude-linkedin-mp3/beat-B03.mp3"
+  },
+  {
+    "id": "B04",
+    "frames": 799,
+    "audio": "claude-linkedin-mp3/beat-B04.mp3"
+  },
+  {
+    "id": "B05",
+    "frames": 787,
+    "audio": "claude-linkedin-mp3/beat-B05.mp3"
+  },
+  {
+    "id": "B06",
+    "frames": 819,
+    "audio": "claude-linkedin-mp3/beat-B06.mp3"
+  },
+  {
+    "id": "B07",
+    "frames": 384,
+    "audio": "claude-linkedin-mp3/beat-B07.mp3"
+  },
+  {
+    "id": "B08",
+    "frames": 233,
+    "audio": "claude-linkedin-mp3/beat-B08.mp3"
+  }
+]

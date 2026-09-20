@@ -1,0 +1,95 @@
+{
+ "metadata": {
+  "title": "Does SurveyMind's Synthetic Data Actually Think Like a Human?",
+  "slug": "cli-surveymind-validator",
+  "topic": "CLAUDE CODE \u00b7 SYNTHETIC DATA VALIDATION",
+  "register": "Teardown",
+  "engine": "kokoro",
+  "voice_kokoro": "am_onyx",
+  "palette": "claude",
+  "style_preset": "claude",
+  "style": "cli",
+  "aspect": "16:9",
+  "note": "cli-explainer, Liam persona (am_onyx, free, IN-FOR-BEAR LAW applies in B00/B09). Required spine: B00 cold open \u00b7 B01 PROBLEM \u00b7 B02 ASK \u00b7 B03 CODE \u00b7 B04 OUTPUT(screen-rec: good scenario, PASS) \u00b7 B05 CHANGE (revision: check it against bad data) \u00b7 B06 OUTPUT(screen-rec: bad scenario, FAIL) \u00b7 B07 SUMMARY \u00b7 B08 NEXT STEPS \u00b7 B09 OUTRO. Both OUTPUT beats are real screen-recording slots (media/B04.mp4, media/B06.mp4) \u2014 capture the actual terminal runs of validate_synthetic.py, never re-simulate them.",
+  "total_estimated_duration_seconds": 158
+ },
+ "beats": [
+  {"beat_id": "B00", "act": "INTRO", "role_note": "COLD OPEN LAW \u2014 open on the Claude UI, ask shown answered",
+   "narration_text": "Liam, in for Bear. Build it with Claude, then take it apart.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"write validate_synthetic.py \u2014 test whether SurveyMind's synthetic Big Five respondents actually replicate real personality correlation structure\"",
+       "topic": "CLAUDE CODE \u00b7 SYNTHETIC DATA VALIDATION", "segment": "SurveyMind Validator",
+       "greeting": "Hola, Bear", "runningText": "running validation\u2026",
+       "output": ["validate_synthetic.py written", "good synthetic set: PASS", "bad synthetic set: FAIL"]}}},
+   "estimated_duration_s": 5},
+
+  {"beat_id": "B01", "act": "PROBLEM \u2014 why care", "role_note": "the problem, the context, the stakes \u2014 BEFORE the CLI loop",
+   "narration_text": "SurveyMind sells synthetic survey respondents \u2014 AI personas standing in for real humans so researchers can skip recruiting. Fine, if the personas actually think like people. But nothing stops a model from generating Big Five scores that look plausible trait by trait while the relationships BETWEEN traits \u2014 the actual structure of a human personality \u2014 are quietly wrong. Ship that into a study and every downstream finding is built on a correlation matrix that was never real.",
+   "visual_intent": "title card: five personality trait dots that look fine individually, connected by a distorted web of correlation lines vs a clean human reference web \u2014 no composer yet",
+   "shot": {"type": "GRAPHIC", "source": null, "motion": "fade"},
+   "estimated_duration_s": 16},
+
+  {"beat_id": "B02", "act": "ASK", "role_note": "composer (ClaudeComposerAsk)",
+   "narration_text": "Ask for the validator. Into Claude: write validate underscore synthetic dot py \u2014 load real and synthetic Big Five data, compute the congruence coefficient between their correlation matrices, run a Jennrich test on whether the matrices statistically differ, bootstrap a confidence interval on the similarity, and run a per-trait Kolmogorov-Smirnov test.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"write validate_synthetic.py:\n  load real vs synthetic Big Five CSVs\n  congruence coefficient on correlation matrices\n  Jennrich test (do matrices differ?)\n  bootstrap CI on similarity\n  per-trait KS test\"",
+       "topic": "CLAUDE CODE \u00b7 SYNTHETIC DATA VALIDATION", "segment": "SurveyMind Validator",
+       "greeting": "The ask,", "runningText": "generating script\u2026"}}},
+   "estimated_duration_s": 16},
+
+  {"beat_id": "B03", "act": "CODE", "role_note": "ClaudeCodeBeat \u2014 the ACTUAL generated code, trimmed to what teaches",
+   "narration_text": "Read it before trusting it. The congruence coefficient is Tucker's phi \u2014 cosine similarity between the two correlation matrices, flattened. Above point-nine-five, the structures agree. The Jennrich test asks the sharper question: are these two matrices statistically distinguishable at all, not just visually close. And the bootstrap resamples the synthetic set a thousand times so the confidence interval isn't a lie built on one lucky draw.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeCodeBeat", "props": {
+       "title": "validate_synthetic.py",
+       "code": "# validate_synthetic.py \u2014 Claude Code output\nimport numpy as np, pandas as pd\nfrom scipy import stats\n\ndef congruence(r_real, r_syn):\n    a, b = r_real.values.flatten(), r_syn.values.flatten()\n    return a @ b / (np.linalg.norm(a) * np.linalg.norm(b))  # Tucker's phi\n\ndef bootstrap_ci(real, syn, n=1000):\n    scores = [congruence(real.sample(frac=1, replace=True).corr(),\n                          syn.sample(frac=1, replace=True).corr())\n              for _ in range(n)]\n    return np.percentile(scores, [2.5, 97.5])\n\n# Jennrich: are the two correlation matrices statistically distinguishable?\n# KS: per-trait, does the real vs synthetic SCORE DISTRIBUTION match?",
+       "sparkLine": "One matrix, one true structure to match."}}},
+   "estimated_duration_s": 17},
+
+  {"beat_id": "B04", "act": "OUTPUT \u2014 run (good scenario)", "role_note": "OPEN slot \u2192 screen recording of the real terminal run",
+   "narration_text": "Run it against SurveyMind's better synthetic set. Congruence coefficient: point-nine-seven \u2014 the correlation structures line up. The Jennrich test can't reject that they're the same matrix. Bootstrap CI sits entirely above point-nine-five. And every trait clears its Kolmogorov-Smirnov test. This is what a synthetic respondent actually replicating human personality structure looks like: PASS.",
+   "visual_intent": "screen recording of the real terminal: dataset preview, cleaning stats, then the correlation matrices side by side, congruence coefficient printed, Jennrich result, bootstrap CI, per-trait KS table, ending on a green PASS",
+   "shot": {"type": "GRAPHIC", "source": null, "motion": "fade"},
+   "estimated_duration_s": 18},
+
+  {"beat_id": "B05", "act": "CHANGE \u2014 check & revise", "role_note": "composer (ClaudeComposerAsk) \u2014 the REQUIRED revision", 
+   "narration_text": "A validator that only ever says pass isn't a validator. Check it: point it at a synthetic set that's actually broken and see if it catches the fake. Into Claude: re-run validate underscore synthetic dot py against the degraded synthetic sample and report every gate.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"re-run validate_synthetic.py against synthetic_degraded.csv \u2014\nreport congruence, Jennrich, bootstrap CI, and per-trait KS for every gate\"",
+       "topic": "CLAUDE CODE \u00b7 SYNTHETIC DATA VALIDATION", "segment": "SurveyMind Validator",
+       "greeting": "", "runningText": "updating\u2026"}}},
+   "estimated_duration_s": 12},
+
+  {"beat_id": "B06", "act": "OUTPUT \u2014 revised (bad scenario)", "role_note": "OPEN slot \u2192 screen recording of the real terminal run",
+   "narration_text": "Same script, degraded synthetic set. Congruence coefficient drops to point-seven-eight. The Jennrich test rejects: these matrices are statistically different, not a rounding error. Bootstrap CI no longer touches point-nine-five. And three of the five traits fail their KS test outright. The validator catches exactly what it's supposed to catch \u2014 a synthetic respondent that looks fine trait by trait but got the relationships between traits wrong.",
+   "visual_intent": "same screen-recording layout as B04, now showing the degraded run \u2014 lower congruence number highlighted, Jennrich significant result in red, bootstrap CI shifted down, KS table with three rows flagged, ending on a red FAIL",
+   "shot": {"type": "GRAPHIC", "source": null, "motion": "fade"},
+   "estimated_duration_s": 17},
+
+  {"beat_id": "B07", "act": "SUMMARY", "role_note": "the lesson \u2014 one beat",
+   "narration_text": "So the risk was never whether synthetic scores look plausible \u2014 they always do. It's whether the correlations between traits match a real human personality's structure. Congruence coefficient, Jennrich, bootstrap, and per-trait KS together catch what eyeballing a distribution never will: a synthetic population that's fluent but structurally fake.",
+   "visual_intent": "recap card: the two PASS/FAIL terminal frames side by side, four test names listed under each verdict",
+   "shot": {"type": "GRAPHIC", "source": null, "motion": "fade"},
+   "estimated_duration_s": 13},
+
+  {"beat_id": "B08", "act": "NEXT STEPS", "role_note": "HANDOFF LAW \u2014 suggested prompt typed in, viewer-addressed",
+   "narration_text": "Your move: take this prompt and point it at whatever synthetic data your own pipeline generates \u2014 don't just trust that it looks human, make it prove the correlation structure survives.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"run congruence coefficient, Jennrich test, bootstrap CI,\nand per-trait KS test comparing my synthetic dataset's\ncorrelation structure against my real dataset's\"",
+       "topic": "CLAUDE CODE \u00b7 SYNTHETIC DATA VALIDATION", "segment": "SurveyMind Validator",
+       "greeting": "Your turn.", "runningText": "paste this into Claude\u2026"}}},
+   "estimated_duration_s": 11},
+
+  {"beat_id": "B09", "act": "OUTRO", "role_note": "OUTRO LAW \u2014 restate the episode title",
+   "narration_text": "Does SurveyMind's synthetic data actually think like a human? Liam, in for Bear \u2014 build it with Claude, then take it apart.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeTitleOutro", "props": {
+       "title": "Does SurveyMind's Synthetic Data Actually Think Like a Human?",
+       "handle": "@NikBearBrown", "subline": "built with Claude, taken apart"}}},
+   "estimated_duration_s": 8}
+ ]
+}

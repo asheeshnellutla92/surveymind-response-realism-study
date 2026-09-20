@@ -1,0 +1,324 @@
+{
+  "metadata": {
+    "title": "Does SurveyMind's Synthetic Data Actually Think Like a Human?",
+    "slug": "cli-surveymind-validator",
+    "topic": "CLAUDE CODE · SYNTHETIC DATA VALIDATION",
+    "register": "Teardown",
+    "engine": "kokoro",
+    "voice_kokoro": "am_onyx",
+    "palette": "claude",
+    "style_preset": "claude",
+    "style": "cli",
+    "aspect": "16:9",
+    "note": "cli-explainer, Liam persona (am_onyx, free, IN-FOR-BEAR LAW applies in B00/B09). Required spine: B00 cold open · B01 PROBLEM · B02 ASK · B03 CODE · B04 OUTPUT(screen-rec: good scenario, PASS) · B05 CHANGE (revision: check it against bad data) · B06 OUTPUT(screen-rec: bad scenario, FAIL) · B07 SUMMARY · B08 NEXT STEPS · B09 OUTRO. Both OUTPUT beats are real screen-recording slots (media/B04.mp4, media/B06.mp4) — capture the actual terminal runs of validate_synthetic.py, never re-simulate them.",
+    "total_estimated_duration_seconds": 158,
+    "build": {
+      "at": "2026-09-19T20:55:22",
+      "cut": "review",
+      "filled": 6,
+      "of": 10,
+      "slates": [
+        "B01",
+        "B04",
+        "B06",
+        "B07"
+      ],
+      "skin_warnings": [
+        "B05: composer beat has an empty spark line — SPARK-LINE LAW wants a short serif cue (e.g. \"The change,\")."
+      ]
+    }
+  },
+  "beats": [
+    {
+      "beat_id": "B00",
+      "act": "INTRO",
+      "role_note": "COLD OPEN LAW — open on the Claude UI, ask shown answered",
+      "narration_text": "Liam, in for Bear. Build it with Claude, then take it apart.",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": "remotion",
+        "motion": "fade",
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "command": "claude \"write validate_synthetic.py — test whether SurveyMind's synthetic Big Five respondents actually replicate real personality correlation structure\"",
+            "topic": "CLAUDE CODE · SYNTHETIC DATA VALIDATION",
+            "segment": "SurveyMind Validator",
+            "greeting": "Hola, Bear",
+            "runningText": "running validation…",
+            "output": [
+              "validate_synthetic.py written",
+              "good synthetic set: PASS",
+              "bad synthetic set: FAIL"
+            ]
+          }
+        }
+      },
+      "estimated_duration_s": 5,
+      "actual_duration_s": 3.86,
+      "audio_file": "mp3/beat-B00.mp3",
+      "render_duration_s": 3.875,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B00.mp4",
+        "filled_by": "media",
+        "at": "2026-09-19T20:55:22"
+      }
+    },
+    {
+      "beat_id": "B01",
+      "act": "PROBLEM — why care",
+      "role_note": "the problem, the context, the stakes — BEFORE the CLI loop",
+      "narration_text": "SurveyMind sells synthetic survey respondents — AI personas standing in for real humans so researchers can skip recruiting. Fine, if the personas actually think like people. But nothing stops a model from generating Big Five scores that look plausible trait by trait while the relationships BETWEEN traits — the actual structure of a human personality — are quietly wrong. Ship that into a study and every downstream finding is built on a correlation matrix that was never real.",
+      "visual_intent": "title card: five personality trait dots that look fine individually, connected by a distorted web of correlation lines vs a clean human reference web — no composer yet",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": null,
+        "motion": "fade"
+      },
+      "estimated_duration_s": 16,
+      "actual_duration_s": 28.62,
+      "audio_file": "mp3/beat-B01.mp3",
+      "render_duration_s": 28.625,
+      "build": {
+        "status": "SLATE",
+        "src": null,
+        "filled_by": null,
+        "at": "2026-09-19T20:55:22",
+        "needs": "YOU → 5–10s gen-AI clip → pantry (as B01.mp4)",
+        "suggested": "suggested prompt: SurveyMind sells synthetic survey respondents — AI personas standing in for real humans so researchers can skip recruiting. Fine, if the personas actually think"
+      }
+    },
+    {
+      "beat_id": "B02",
+      "act": "ASK",
+      "role_note": "composer (ClaudeComposerAsk)",
+      "narration_text": "Ask for the validator. Into Claude: write validate underscore synthetic dot py — load real and synthetic Big Five data, compute the congruence coefficient between their correlation matrices, run a Jennrich test on whether the matrices statistically differ, bootstrap a confidence interval on the similarity, and run a per-trait Kolmogorov-Smirnov test.",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": "remotion",
+        "motion": "fade",
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "command": "claude \"write validate_synthetic.py:\n  load real vs synthetic Big Five CSVs\n  congruence coefficient on correlation matrices\n  Jennrich test (do matrices differ?)\n  bootstrap CI on similarity\n  per-trait KS test\"",
+            "topic": "CLAUDE CODE · SYNTHETIC DATA VALIDATION",
+            "segment": "SurveyMind Validator",
+            "greeting": "The ask,",
+            "runningText": "generating script…"
+          }
+        }
+      },
+      "estimated_duration_s": 16,
+      "actual_duration_s": 19.52,
+      "audio_file": "mp3/beat-B02.mp3",
+      "render_duration_s": 19.541666666666668,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B02.mp4",
+        "filled_by": "media",
+        "at": "2026-09-19T20:55:22"
+      }
+    },
+    {
+      "beat_id": "B03",
+      "act": "CODE",
+      "role_note": "ClaudeCodeBeat — the ACTUAL generated code, trimmed to what teaches",
+      "narration_text": "Read it before trusting it. The congruence coefficient is Tucker's phi — cosine similarity between the two correlation matrices, flattened. Above point-nine-five, the structures agree. The Jennrich test asks the sharper question: are these two matrices statistically distinguishable at all, not just visually close. And the bootstrap resamples the synthetic set a thousand times so the confidence interval isn't a lie built on one lucky draw.",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": "remotion",
+        "motion": "fade",
+        "remotion": {
+          "pattern": "ClaudeCodeBeat",
+          "props": {
+            "title": "validate_synthetic.py",
+            "code": "# validate_synthetic.py — Claude Code output\nimport numpy as np, pandas as pd\nfrom scipy import stats\n\ndef congruence(r_real, r_syn):\n    a, b = r_real.values.flatten(), r_syn.values.flatten()\n    return a @ b / (np.linalg.norm(a) * np.linalg.norm(b))  # Tucker's phi\n\ndef bootstrap_ci(real, syn, n=1000):\n    scores = [congruence(real.sample(frac=1, replace=True).corr(),\n                          syn.sample(frac=1, replace=True).corr())\n              for _ in range(n)]\n    return np.percentile(scores, [2.5, 97.5])\n\n# Jennrich: are the two correlation matrices statistically distinguishable?\n# KS: per-trait, does the real vs synthetic SCORE DISTRIBUTION match?",
+            "sparkLine": "One matrix, one true structure to match."
+          }
+        }
+      },
+      "estimated_duration_s": 17,
+      "actual_duration_s": 23.15,
+      "audio_file": "mp3/beat-B03.mp3",
+      "render_duration_s": 23.166666666666668,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B03.mp4",
+        "filled_by": "media",
+        "at": "2026-09-19T20:55:22"
+      }
+    },
+    {
+      "beat_id": "B04",
+      "act": "OUTPUT — run (good scenario)",
+      "role_note": "OPEN slot → screen recording of the real terminal run",
+      "narration_text": "Run it against SurveyMind's better synthetic set. Congruence coefficient: point-nine-seven — the correlation structures line up. The Jennrich test can't reject that they're the same matrix. Bootstrap CI sits entirely above point-nine-five. And every trait clears its Kolmogorov-Smirnov test. This is what a synthetic respondent actually replicating human personality structure looks like: PASS.",
+      "visual_intent": "screen recording of the real terminal: dataset preview, cleaning stats, then the correlation matrices side by side, congruence coefficient printed, Jennrich result, bootstrap CI, per-trait KS table, ending on a green PASS",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": null,
+        "motion": "fade"
+      },
+      "estimated_duration_s": 18,
+      "actual_duration_s": 21.76,
+      "audio_file": "mp3/beat-B04.mp3",
+      "render_duration_s": 21.791666666666668,
+      "build": {
+        "status": "SLATE",
+        "src": null,
+        "filled_by": null,
+        "at": "2026-09-19T20:55:22",
+        "needs": "YOU → 5–10s gen-AI clip → pantry (as B04.mp4)",
+        "suggested": "suggested prompt: Run it against SurveyMind's better synthetic set. Congruence coefficient: point-nine-seven — the correlation structures line up. The Jennrich test can't reject "
+      }
+    },
+    {
+      "beat_id": "B05",
+      "act": "CHANGE — check & revise",
+      "role_note": "composer (ClaudeComposerAsk) — the REQUIRED revision",
+      "narration_text": "A validator that only ever says pass isn't a validator. Check it: point it at a synthetic set that's actually broken and see if it catches the fake. Into Claude: re-run validate underscore synthetic dot py against the degraded synthetic sample and report every gate.",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": "remotion",
+        "motion": "fade",
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "command": "claude \"re-run validate_synthetic.py against synthetic_degraded.csv —\nreport congruence, Jennrich, bootstrap CI, and per-trait KS for every gate\"",
+            "topic": "CLAUDE CODE · SYNTHETIC DATA VALIDATION",
+            "segment": "SurveyMind Validator",
+            "greeting": "",
+            "runningText": "updating…"
+          }
+        }
+      },
+      "estimated_duration_s": 12,
+      "actual_duration_s": 15.38,
+      "audio_file": "mp3/beat-B05.mp3",
+      "render_duration_s": 15.416666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B05.mp4",
+        "filled_by": "media",
+        "at": "2026-09-19T20:55:22"
+      }
+    },
+    {
+      "beat_id": "B06",
+      "act": "OUTPUT — revised (bad scenario)",
+      "role_note": "OPEN slot → screen recording of the real terminal run",
+      "narration_text": "Same script, degraded synthetic set. Congruence coefficient drops to point-seven-eight. The Jennrich test rejects: these matrices are statistically different, not a rounding error. Bootstrap CI no longer touches point-nine-five. And three of the five traits fail their KS test outright. The validator catches exactly what it's supposed to catch — a synthetic respondent that looks fine trait by trait but got the relationships between traits wrong.",
+      "visual_intent": "same screen-recording layout as B04, now showing the degraded run — lower congruence number highlighted, Jennrich significant result in red, bootstrap CI shifted down, KS table with three rows flagged, ending on a red FAIL",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": null,
+        "motion": "fade"
+      },
+      "estimated_duration_s": 17,
+      "actual_duration_s": 22.98,
+      "audio_file": "mp3/beat-B06.mp3",
+      "render_duration_s": 23.0,
+      "build": {
+        "status": "SLATE",
+        "src": null,
+        "filled_by": null,
+        "at": "2026-09-19T20:55:22",
+        "needs": "YOU → 5–10s gen-AI clip → pantry (as B06.mp4)",
+        "suggested": "suggested prompt: Same script, degraded synthetic set. Congruence coefficient drops to point-seven-eight. The Jennrich test rejects: these matrices are statistically different, n"
+      }
+    },
+    {
+      "beat_id": "B07",
+      "act": "SUMMARY",
+      "role_note": "the lesson — one beat",
+      "narration_text": "So the risk was never whether synthetic scores look plausible — they always do. It's whether the correlations between traits match a real human personality's structure. Congruence coefficient, Jennrich, bootstrap, and per-trait KS together catch what eyeballing a distribution never will: a synthetic population that's fluent but structurally fake.",
+      "visual_intent": "recap card: the two PASS/FAIL terminal frames side by side, four test names listed under each verdict",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": null,
+        "motion": "fade"
+      },
+      "estimated_duration_s": 13,
+      "actual_duration_s": 18.3,
+      "audio_file": "mp3/beat-B07.mp3",
+      "render_duration_s": 18.333333333333332,
+      "build": {
+        "status": "SLATE",
+        "src": null,
+        "filled_by": null,
+        "at": "2026-09-19T20:55:22",
+        "needs": "YOU → 5–10s gen-AI clip → pantry (as B07.mp4)",
+        "suggested": "suggested prompt: So the risk was never whether synthetic scores look plausible — they always do. It's whether the correlations between traits match a real human personality's st"
+      }
+    },
+    {
+      "beat_id": "B08",
+      "act": "NEXT STEPS",
+      "role_note": "HANDOFF LAW — suggested prompt typed in, viewer-addressed",
+      "narration_text": "Your move: take this prompt and point it at whatever synthetic data your own pipeline generates — don't just trust that it looks human, make it prove the correlation structure survives.",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": "remotion",
+        "motion": "fade",
+        "remotion": {
+          "pattern": "ClaudeComposerAsk",
+          "props": {
+            "command": "claude \"run congruence coefficient, Jennrich test, bootstrap CI,\nand per-trait KS test comparing my synthetic dataset's\ncorrelation structure against my real dataset's\"",
+            "topic": "CLAUDE CODE · SYNTHETIC DATA VALIDATION",
+            "segment": "SurveyMind Validator",
+            "greeting": "Your turn.",
+            "runningText": "paste this into Claude…"
+          },
+          "rendered": {
+            "out": "media/B08.mp4",
+            "at": "2026-09-20T03:52:25.298177+00:00"
+          }
+        }
+      },
+      "estimated_duration_s": 11,
+      "actual_duration_s": 9.9,
+      "audio_file": "mp3/beat-B08.mp3",
+      "render_duration_s": 9.916666666666666,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B08.mp4",
+        "filled_by": "remotion:ClaudeComposerAsk",
+        "at": "2026-09-19T20:55:22"
+      }
+    },
+    {
+      "beat_id": "B09",
+      "act": "OUTRO",
+      "role_note": "OUTRO LAW — restate the episode title",
+      "narration_text": "Does SurveyMind's synthetic data actually think like a human? Liam, in for Bear — build it with Claude, then take it apart.",
+      "shot": {
+        "type": "GRAPHIC",
+        "source": "remotion",
+        "motion": "fade",
+        "remotion": {
+          "pattern": "ClaudeTitleOutro",
+          "props": {
+            "title": "Does SurveyMind's Synthetic Data Actually Think Like a Human?",
+            "handle": "@NikBearBrown",
+            "subline": "built with Claude, taken apart"
+          },
+          "rendered": {
+            "out": "media/B09.mp4",
+            "at": "2026-09-20T03:52:54.154128+00:00"
+          }
+        }
+      },
+      "estimated_duration_s": 8,
+      "actual_duration_s": 7.62,
+      "audio_file": "mp3/beat-B09.mp3",
+      "render_duration_s": 7.625,
+      "build": {
+        "status": "VIDEO",
+        "src": "media/B09.mp4",
+        "filled_by": "remotion:ClaudeTitleOutro",
+        "at": "2026-09-19T20:55:22"
+      }
+    }
+  ]
+}

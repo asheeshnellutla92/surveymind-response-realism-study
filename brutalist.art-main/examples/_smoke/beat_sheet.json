@@ -1,0 +1,30 @@
+{
+ "metadata": {
+  "title": "Smoke Test",
+  "slug": "smoke",
+  "topic": "PACKAGING SMOKE TEST",
+  "register": "fixture",
+  "engine": "kokoro",
+  "voice_kokoro": "af_bella",
+  "aspect": "16:9",
+  "note": "Fixture reel for ./art smoke — see runtime/scripts/smoke_test.sh. Not a real reel: two plain slate beats, zero Manim, zero Remotion. Exercises real Kokoro synthesis + run.sh + compile.py end to end. Never edit narration_text without keeping GATE AUDIO's -40dB margin in mind."
+ },
+ "beats": [
+  {
+   "beat_id": "B00",
+   "act": "cold open",
+   "narration_text": "This is the brutalist toolkit packaging smoke test. If you can hear this sentence clearly, Kokoro audio synthesis is working end to end.",
+   "voice": "af_bella",
+   "engine": "kokoro",
+   "estimated_duration_s": 8
+  },
+  {
+   "beat_id": "B01",
+   "act": "outro",
+   "narration_text": "Smoke test complete. The render pipeline reached a compiled, watchable slate cut.",
+   "voice": "af_bella",
+   "engine": "kokoro",
+   "estimated_duration_s": 5
+  }
+ ]
+}

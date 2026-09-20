@@ -1,0 +1,47 @@
+[
+  {
+    "id": "B00",
+    "frames": 672,
+    "audio": "chatgpt-copied-claude-mp3/beat-B00.mp3"
+  },
+  {
+    "id": "B01",
+    "frames": 834,
+    "audio": "chatgpt-copied-claude-mp3/beat-B01.mp3"
+  },
+  {
+    "id": "B02",
+    "frames": 789,
+    "audio": "chatgpt-copied-claude-mp3/beat-B02.mp3"
+  },
+  {
+    "id": "B03",
+    "frames": 670,
+    "audio": "chatgpt-copied-claude-mp3/beat-B03.mp3"
+  },
+  {
+    "id": "B04",
+    "frames": 932,
+    "audio": "chatgpt-copied-claude-mp3/beat-B04.mp3"
+  },
+  {
+    "id": "B05",
+    "frames": 848,
+    "audio": "chatgpt-copied-claude-mp3/beat-B05.mp3"
+  },
+  {
+    "id": "B06",
+    "frames": 860,
+    "audio": "chatgpt-copied-claude-mp3/beat-B06.mp3"
+  },
+  {
+    "id": "B07",
+    "frames": 357,
+    "audio": "chatgpt-copied-claude-mp3/beat-B07.mp3"
+  },
+  {
+    "id": "B08",
+    "frames": 264,
+    "audio": "chatgpt-copied-claude-mp3/beat-B08.mp3"
+  }
+]

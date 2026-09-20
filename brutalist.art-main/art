@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# art — one entry point for the brutalist toolkit (the pared-down brutalist-art).
+#
+#   ./art --list                 list the skills
+#   ./art <skill> --help         show a skill's SKILL.md
+#   ./art scenes "<beat need>"   LIBRARY-FIRST scene search — run BEFORE authoring a beat
+#   ./art scenes --check <Name>  is that composition renderable? (the anti-slate check)
+#   ./art scene-index            regenerate scenes.json + SCENE-DOC-TODO.md after adding one
+#   ./art icons "<what it needs>" CANONICAL icon search — run BEFORE drawing a mark
+#   ./art icons --check <name>   is that icon in the set? (the anti-redraw check)
+#   ./art icon-build             re-cut the canonical set from svg/ (rarely needed)
+#   ./art todo  <reel> [flags]   per-video beat ledger (which beats need filling, how)
+#   ./art run   <reel> [flags]   compile a review cut
+#   ./art shorts <reel> [flags]  derive the 9:16 Short (cap check + auto-shorten)
+#   ./art vertical <reel>       full-length 9:16 companion (no shortening)
+#   ./art approvals <reel> --fingerprints  inspect human-review subjects (never signs)
+#   ./art final <reel>           verified master — no review label (→ <slug>.mp4)
+#   ./art doctor                 dependency readiness (wraps ./setup)
+#   ./art smoke                  real end-to-end render proof (examples/_smoke -> watchable mp4)
+#   ./art keys                   validate optional keys (Higgsfield login, SI key)
+#
+# Free by default: Kokoro TTS (voices af_bella "Bella", am_onyx "Onyx"), Manim,
+# Remotion — no account required. Optional: Higgsfield CLI login unlocks AI video
+# beats; absent = free path (Ken Burns stills) runs silently. No ElevenLabs, ever.
+set -euo pipefail
+
+ART_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export ART_HOME
+SKILLS="$ART_HOME/skills"
+
+skill_dir() {
+  find "$SKILLS" -maxdepth 2 -type d -name "$1" | head -1
+}
+
+cmd="${1:-}"; shift || true
+
+case "$cmd" in
+  ""|-h|--help|help)
+    sed -n '2,18p' "$ART_HOME/art" | sed 's/^# \{0,1\}//'
+    ;;
+  --list|list)
+    printf '%-22s %s\n' "SKILL" "ROLE"
+    printf '%-22s %s\n' "ai-explainer"   "builder — Claude-branded explainer reel (the tight cut)"
+    printf '%-22s %s\n' "cli-explainer"  "builder — prompt → code → moving output (the build reel)"
+    printf '%-22s %s\n' "deep-explainer" "builder — 5-10 min documentary episode (vox pantry beats)"
+    printf '%-22s %s\n' "anthropics"     "builder — reads Anthropic artifacts against their own claims; practitioner-report register"
+    printf '%-22s %s\n' "fashionista"    "builder — AI fashion-call experiment; sports-announcer call + correction ask; Kokoro am_onyx"
+    printf '%-22s %s\n' "fellows"        "builder — wraps a HAI fellow's video report in Claude bookends for @HumanitariansAI"
+    printf '%-22s %s\n' "finance"        "builder — templatized SEC EDGAR filings reel; 11 beats, 5 charts, fully deterministic"
+    printf '%-22s %s\n' "guests"         "builder — wraps a board-member or invited-speaker video in Claude bookends for @HumanitariansAI"
+    printf '%-22s %s\n' "nbb"            "persona — Teardown register, Liam in for Bear (Kokoro am_onyx)"
+    printf '%-22s %s\n' "hai"            "persona — Plain register (simple, direct), Kokoro Bella (af_bella)"
+    printf '%-22s %s\n' "explainer"      "doctrine — parent chassis the builders inherit (not an entry point)"
+    printf '%-22s %s\n' "your-turn"      "doctrine — the closing three-beat standard"
+    printf '%-22s %s\n' "logo"           "builder — brand sting outro; random-once animation + brand SVG + jingle (the mp3 is the clock)"
+    printf '%-22s %s\n' "duration-planner" "doctrine — duration is an output, never a target"
+    printf '%-22s %s\n' "nopunt"         "doctrine — maps animatable beat-types to Brutalist primitives; consult before placing any placeholder"
+    printf '%-22s %s\n' "screen-clean"   "doctrine — prepares screen recordings (Zoom/Teams/Meet) for use as a reel beat"
+    ;;
+  icons|icon|icon-search)
+    # LIBRARY-FIRST, one level down from scenes: find the mark before drawing one.
+    exec python3 "$ART_HOME/runtime/scripts/icon_search.py" "$@"
+    ;;
+  icon-build)
+    exec python3 "$ART_HOME/runtime/scripts/build_icon_set.py" "$@"
+    ;;
+  scenes|scene|scene-search)
+    # LIBRARY-FIRST: ask what already exists before authoring, slating or punting a beat.
+    exec python3 "$ART_HOME/runtime/scripts/scene_search.py" "$@"
+    ;;
+  scene-index)
+    exec python3 "$ART_HOME/runtime/scripts/build_scene_index.py" \
+      "$ART_HOME/runtime/remotion/src" --todo "$@"
+    ;;
+  todo)
+    exec python3 "$ART_HOME/runtime/scripts/todo.py" "$@"
+    ;;
+  run)
+    exec bash "$ART_HOME/runtime/scripts/run.sh" "$@"
+    ;;
+  shorts)
+    exec python3 "$ART_HOME/runtime/scripts/shorts.py" "$@"
+    ;;
+  vertical)
+    exec python3 "$ART_HOME/runtime/scripts/shorts.py" "$@" --vertical
+    ;;
+  approvals)
+    exec python3 "$ART_HOME/runtime/scripts/build_safety.py" "$@"
+    ;;
+  final)
+    case " $* " in
+      *" --height "*|*" --height="*) exec python3 "$ART_HOME/runtime/scripts/compile.py" "$@" ;;
+      *)              exec python3 "$ART_HOME/runtime/scripts/compile.py" "$@" --height 2160 ;;
+    esac
+    ;;
+  doctor)
+    if [ -x "$ART_HOME/setup" ]; then exec "$ART_HOME/setup" "$@"; else
+      echo "setup script missing"; exit 1; fi
+    ;;
+  smoke)
+    exec bash "$ART_HOME/runtime/scripts/smoke_test.sh" "$@"
+    ;;
+  keys)
+    exec python3 "$ART_HOME/runtime/scripts/check_keys.py" "$@"
+    ;;
+  *)
+    dir="$(skill_dir "$cmd")"
+    [ -z "$dir" ] && { echo "art: unknown skill '$cmd' (try ./art --list)"; exit 2; }
+    if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+      exec "${PAGER:-cat}" "$dir/SKILL.md"
+    fi
+    echo "art: '$cmd' → $dir/SKILL.md"
+    echo "This skill is agent-driven: open its SKILL.md in your CLI and follow the phases."
+    echo "Runtime scripts live in runtime/scripts/ (call via python3, or use ./art run <reel>)."
+    ;;
+esac

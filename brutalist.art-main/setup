@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+# setup — the doctor for the brutalist toolkit (free by default).
+#
+#   ./setup            # check everything, print the readiness table
+#   ./setup --install  # install the core Python deps + Remotion's node deps, then check
+#
+# Core features require no paid services or API keys. Everything below is free
+# and local. Optional Higgsfield CLI login unlocks AI video beats; ElevenLabs is
+# permanently removed. Exit 0 if all required features are ready; exit 1 otherwise.
+#
+# Readiness is decided ONLY by live verification below — importing every
+# Python dep, actually running ffmpeg/ffprobe, and synthesizing + decoding
+# one real Kokoro phrase (mean_volume > -40 dB). An install step's own exit
+# code is reported (INSTALL_FAILED) but never substitutes for a check: a
+# green table means the checks passed, not that `pip install` returned 0.
+set -uo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$HERE"
+
+g(){ printf '\033[32m%s\033[0m' "$1"; }
+r(){ printf '\033[31m%s\033[0m' "$1"; }
+b(){ printf '\033[1m%s\033[0m' "$1"; }
+
+have(){ command -v "$1" >/dev/null 2>&1; }
+pymod(){ python3 -c "import $1" >/dev/null 2>&1; }
+node_ge(){ have node && [ "$(node -p 'process.versions.node.split(".")[0]' 2>/dev/null||echo 0)" -ge "$1" ]; }
+
+# where a clean machine's fontconfig/OS actually looks for user fonts
+font_dir(){
+  case "$(uname -s)" in
+    Darwin) echo "$HOME/Library/Fonts" ;;
+    *)      echo "$HOME/.local/share/fonts" ;;
+  esac
+}
+
+# have_font <label> — checks fc-list (fully captured first, so a fast match
+# never SIGPIPEs a still-writing fc-list under `pipefail`), then falls back to
+# scanning font dirs for a squashed-space filename match (so "EB Garamond" also
+# matches EBGaramond-VariableFont_wght.ttf).
+have_font(){
+  local label="$1"
+  if have fc-list; then
+    local listing; listing="$(fc-list 2>/dev/null)"
+    printf '%s\n' "$listing" | grep -qi "$label" && return 0
+  fi
+  local squashed; squashed="$(printf '%s' "$label" | tr -d ' ')"
+  local dir
+  for dir in "$(font_dir)" /Library/Fonts /System/Library/Fonts /usr/share/fonts "$HERE/runtime/fonts"; do
+    [ -d "$dir" ] || continue
+    find "$dir" -iname "*${squashed}*" 2>/dev/null | grep -q . && return 0
+  done
+  return 1
+}
+
+INSTALL_FAILED=0
+
+if [ "${1:-}" = "--install" ]; then
+  b "Installing core Python deps…"; echo
+  if ! python3 -m pip install --break-system-packages -r requirements.txt \
+      && ! python3 -m pip install -r requirements.txt; then
+    r "Python dependency install FAILED — see pip output above."; echo
+    INSTALL_FAILED=1
+  fi
+  echo
+
+  b "Installing Remotion node deps…"; echo
+  if ! (cd runtime/remotion && npm install); then
+    r "npm install FAILED — see output above."; echo
+    INSTALL_FAILED=1
+  fi
+  echo
+
+  b "Installing fonts (bundled families + Oswald) into $(font_dir)…"; echo
+  FONT_DIR="$(font_dir)"
+  mkdir -p "$FONT_DIR"
+  find runtime/fonts -iname '*.ttf' -exec cp -n {} "$FONT_DIR/" \; 2>/dev/null
+  if ! have_font "Oswald"; then
+    if curl -fsSL "https://raw.githubusercontent.com/google/fonts/main/ofl/oswald/Oswald%5Bwght%5D.ttf" \
+        -o "$FONT_DIR/Oswald-Variable.ttf"; then
+      : # downloaded
+    else
+      r "Oswald download FAILED — install by hand from fonts.google.com/specimen/Oswald"; echo
+      INSTALL_FAILED=1
+    fi
+  fi
+  have fc-cache && fc-cache -f >/dev/null 2>&1
+  echo
+
+  if [ ! -f runtime/models/kokoro/kokoro-v1.0.onnx ] || [ ! -f runtime/models/kokoro/voices-v1.0.bin ]; then
+    b "Downloading the Kokoro voice model (~340MB, one-time, free — not in the git repo)…"; echo
+    mkdir -p runtime/models/kokoro
+    if ! ( cd runtime/models/kokoro && \
+        curl -fLO https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/kokoro-v1.0.onnx && \
+        curl -fLO https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0/voices-v1.0.bin ); then
+      r "Kokoro model download FAILED — re-run ./setup --install when online."; echo
+      INSTALL_FAILED=1
+    fi
+  fi
+  echo; shift || true
+fi
+
+# ── ElevenLabs guard ─────────────────────────────────────────────────
+# Functional ElevenLabs references are bugs; prose documentation mentioning the
+# name is allowed. setup is excluded because it contains this guard.
+EL_PAT="ELEVEN""LABS_API_KEY|elevenlabs""\.io|\"engine\"[^\"]*\"elevenlabs\"|xi-api-key"
+if grep -rqiE "$EL_PAT" \
+    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ \
+    --exclude-dir='.claude' --exclude='CHANGELOG*' --exclude=setup .; then
+  r "ElevenLabs reference found — this toolkit is Kokoro-only for narration."; echo
+  echo "  Files with hits:"
+  grep -rliE "$EL_PAT" \
+    --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=__pycache__ \
+    --exclude-dir='.claude' --exclude='CHANGELOG*' --exclude=setup . | sed 's/^/    /'
+  exit 1
+fi
+
+# Dynamic OK_<id>/MISS_<id> vars instead of associative arrays: macOS ships
+# bash 3.2 by default (no `declare -A`), and this script must run there too.
+check(){
+  local id="$1"
+  eval "OK_${id}=0"
+  if eval "$2" >/dev/null 2>&1; then
+    eval "OK_${id}=1"
+  else
+    eval "MISS_${id}=\$3"
+  fi
+}
+check ffmpeg    'ffmpeg -version >/dev/null 2>&1 && ffprobe -version >/dev/null 2>&1' 'install ffmpeg (brew install ffmpeg / apt install ffmpeg)'
+check python    'have python3'                  'install Python 3.10+'
+check node20    'node_ge 20'                    'install Node ≥ 20 (nodejs.org / nvm)'
+check latex     'have pdflatex && (have dvisvgm || have latex)' 'install LaTeX + dvisvgm (MacTeX / TeX Live) — only for Manim equation beats'
+check py_pillow 'pymod PIL'                     'pip install Pillow (slates / request cards / previz)'
+check py_manim  'pymod manim'                   'pip install "manim<0.19"'
+check py_whisper 'pymod faster_whisper'         'pip install "faster-whisper<2" (captions / word clock)'
+check py_kokoro 'pymod kokoro_onnx'             'pip install kokoro-onnx (the free voice engine)'
+check kokoro_model '[ -f runtime/models/kokoro/kokoro-v1.0.onnx ] && [ -f runtime/models/kokoro/voices-v1.0.bin ]' 'model files ship with this toolkit — if missing: curl -LO from github.com/thewh1teagle/kokoro-onnx releases (model-files-v1.0)'
+check kokoro_synth "python3 \"$HERE/runtime/scripts/setup_smoke_kokoro.py\"" 'Kokoro failed to synthesize + decode a test phrase above -40 dB — check model files, kokoro_onnx install, and ffmpeg (run runtime/scripts/setup_smoke_kokoro.py directly to see why)'
+check remotion_deps '[ -d runtime/remotion/node_modules ]' 'cd runtime/remotion && npm install'
+check font_garamond 'have_font Garamond' 'bundled in runtime/fonts/EB_Garamond — install: ./setup --install (copies it into ~/Library/Fonts or equivalent)'
+check font_oswald   'have_font Oswald'   'not bundled — install: ./setup --install (downloads it from Google Fonts)'
+
+FEATURES=(
+ "audio (Kokoro Bella/Onyx)|ffmpeg python py_kokoro kokoro_model kokoro_synth"
+ "captions + word clock|ffmpeg py_whisper"
+ "Manim beats|ffmpeg py_manim py_pillow"
+ "Manim equation beats|ffmpeg py_manim latex"
+ "Remotion beats + bookends|node20 remotion_deps"
+ "slates / previz / compile|ffmpeg py_pillow"
+ "fonts (EB Garamond + Oswald)|font_garamond font_oswald"
+)
+
+echo; b "brutalist — readiness (free-only toolkit: no keys, ever)"; echo; echo
+printf '  %-28s %s\n' "FEATURE" "STATUS"
+printf '  %-28s %s\n' "-------" "------"
+fail=0
+for row in "${FEATURES[@]}"; do
+  IFS='|' read -r name reqs <<<"$row"
+  missing=""
+  for id in $reqs; do
+    eval "v=\$OK_${id}"
+    [ "$v" = 1 ] || missing="$missing $id"
+  done
+  if [ -z "$missing" ]; then
+    printf '  %-28s %b\n' "$name" "$(g '✅ ready')"
+  else
+    printf '  %-28s %b\n' "$name" "$(r '❌ blocked')"; fail=1
+    for id in $missing; do
+      eval "m=\$MISS_${id}"
+      echo "        · $m"
+    done
+  fi
+done
+echo
+if [ "$INSTALL_FAILED" = 1 ]; then
+  r "One or more install steps failed above — see the FAILED lines."; echo
+  fail=1
+fi
+[ "$fail" = 1 ] && { r "Something is blocked — see above."; echo; exit 1; }
+g "All core features ready. Voices: Bella (af_bella) and Onyx (am_onyx). Cost: \$0.00."; echo
+echo "Run \`./art keys\` to check optional Higgsfield login."
+echo "A green table above means every dependency checks out live — it does NOT"
+echo "mean a video actually renders. Run \`./art smoke\` for that proof: it builds"
+echo "the tiny examples/_smoke/ fixture end to end and verifies the DECODED"
+echo "mp4 (audio volume, real video/audio streams, non-zero file)."

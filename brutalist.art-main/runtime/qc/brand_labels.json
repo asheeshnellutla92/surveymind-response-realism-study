@@ -1,0 +1,7 @@
+{
+  "_comment": "Channel -> fixed slot-1 kicker (series name) + slot-2 folder chip. Enforced by beat_lint.py (hardening rule 7). Edit freely; add channels as needed. A channel not listed here is not branding-checked.",
+  "_scope_note": "claude / claude-liam are SHARED DEFAULT PERSONAS (Kokoro voices) reused across every register — ai-explainer, cli-explainer, deep-explainer, and skill-teardown corpora of any size (e.g. the anthropics skill teardowns) — each with its own legitimately per-video topic. They are not single fixed-series channels, so they carry no entry here (Rule 7 skips unknown channels). Only give a channel a fixed kicker if EVERY video under it truly shares one series name, as with the org-branded channels below.",
+  "claude-medhavy": { "kicker": "Medhavy", "chip": "@MedhavyAI" },
+  "claude-hai":     { "kicker": "Irreducibly Human", "chip": "@HumanitariansAI" },
+  "claude-musinique": { "kicker": "Tools for Indie Artists", "chip": "@Musinique" }
+}

@@ -1,0 +1,96 @@
+{
+ "metadata": {
+  "title": "Watch int8 Rounding Mash Your Activations",
+  "slug": "cli-int8-mash",
+  "topic": "CLAUDE CODE · QUANTIZATION",
+  "register": "Teardown",
+  "voice": "NikBearBrown",
+  "voice_id": "${ELEVENLABS_VOICE_NIKBEARBROWN}",
+  "palette": "claude",
+  "style_preset": "claude",
+  "style": "cli",
+  "note": "CLI video in the REQUIRED spine: B00 cold open (ClaudeComposerAsk, ask answered) · B01 PROBLEM (why care) · B02 ASK · B03 CODE (ClaudeCodeBeat, the ACTUAL code) · B04 OUTPUT(manim) · B05 CHANGE · B06 OUTPUT(manim) · B07 SUMMARY · B08 NEXT STEPS (handoff, 'Your turn.') · B09 outro (ClaudeTitleOutro). Output beats are Manim video; the CLI loop carries one required revision (B05 change → B06). Input beats wear the Claude skin — never the dark terminal.",
+  "total_estimated_duration_seconds": 118
+ },
+ "beats": [
+  {"beat_id": "B00", "act": "INTRO", "role_note": "COLD OPEN LAW — open on the Claude UI, ask shown answered",
+   "narration_text": "Nik Bear Brown. Build it with Claude, then take it apart.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"write quantize_demo.py — show what int8 rounding does to a weight tensor vs an activation tensor\"",
+       "topic": "CLAUDE CODE · QUANTIZATION", "segment": "Int8 Rounding Mash",
+       "greeting": "Hola, Bear", "runningText": "running experiment…",
+       "output": ["quantize_demo.py written", "weights: 249 levels — fine", "activations: 2 levels — mashed"]}}},
+   "estimated_duration_s": 5},
+
+  {"beat_id": "B01", "act": "PROBLEM — why care", "role_note": "the problem, the context, the stakes — BEFORE the CLI loop",
+   "narration_text": "To fit a model on a microcontroller you quantize it — float32 down to int8, four times smaller, and faster. It's the move that makes edge AI possible. But the same eight bits that leave your weights untouched can quietly destroy an activation tensor, and the model ships broken with no error. The question this video answers: when does int8 mash the signal, and why.",
+   "visual_intent": "title card: int8 quantization as the enabling move (4x smaller) with a warning — 'harmless for weights, lethal for narrow activations'; no composer yet",
+   "shot": {"type": "GRAPHIC", "source": null, "motion": "fade"},
+   "estimated_duration_s": 14},
+
+  {"beat_id": "B02", "act": "ASK", "role_note": "composer (ClaudeComposerAsk)",
+   "narration_text": "Ask for the experiment. Into Claude: write quantize_demo dot py, int8 quant with a scale and zero-point, and show what the rounding does to a weight tensor spanning minus one-and-a-half to one-and-a-half versus an activation tensor spanning point-zero-zero-one to point-zero-one.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"write quantize_demo.py:\n  int8 quant (scale, zero_point)\n  weights in [-1.5, 1.5]\n  vs activations in [0.001, 0.01]\n  show what the rounding does to each\"",
+       "topic": "CLAUDE CODE · QUANTIZATION", "segment": "Int8 Rounding Mash",
+       "greeting": "The ask,", "runningText": "generating script…"}}},
+   "estimated_duration_s": 15},
+
+  {"beat_id": "B03", "act": "CODE", "role_note": "ClaudeCodeBeat — the ACTUAL generated code, trimmed to what teaches",
+   "narration_text": "Read it before trusting it. The mapping is one line — q equals round of x over scale, plus the zero-point, clipped to the int8 range. Scale is the range divided by two-fifty-five. The whole story is in that denominator: one scale, calibrated on the wide tensor, applied to the narrow one.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeCodeBeat", "props": {
+       "title": "quantize_demo.py",
+       "code": "# quantize_demo.py  —  Claude Code output\nimport numpy as np\n\ndef quantize(x, lo, hi):\n    scale = (hi - lo) / 255            # <- the denominator\n    zp    = round(-128 - lo / scale)\n    q     = np.clip(np.round(x/scale)+zp, -128, 127)\n    return scale * (q - zp)            # dequantized\n\n# A: weights   in [-1.5, 1.5]  -> scale 0.0118  (fine)\n# B: activations in [0.001,0.01] SAME scale -> collapse",
+       "sparkLine": "One scale, two fates."}}},
+   "estimated_duration_s": 15},
+
+  {"beat_id": "B04", "act": "OUTPUT — run", "role_note": "OPEN vox slot → Manim video",
+   "narration_text": "Run it. On the left, the weights: the reconstruction rides right on top of the original — two-hundred-forty-nine distinct levels, error you'd never notice. On the right, the same scale on the activation sine, and the wave flattens onto two levels. Same eight bits. One tensor is fine; the other is gone.",
+   "visual_intent": "Manim: weights curve with dequantized staircase hugging it (249 levels), activation sine snapping onto ~2 levels and collapsing to bars (2 levels mash)",
+   "shot": {"type": "GRAPHIC", "source": "manim", "motion": "fade",
+     "manim": {"scene_class": "B04_QuantMash", "file": "scenes.py"}},
+   "estimated_duration_s": 17},
+
+  {"beat_id": "B05", "act": "CHANGE — check & revise", "role_note": "composer (ClaudeComposerAsk) — the REQUIRED revision",
+   "narration_text": "That's a bug, not a law. The fix is to stop sharing one scale. Iterate: update quantize_demo dot py, give each tensor its own min and max, per-channel, and re-run the collapse metric.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"update quantize_demo.py:\n  -> per-channel scale\n  -> each tensor its own min/max\n  -> re-run and show collapse metric\"",
+       "topic": "CLAUDE CODE · QUANTIZATION", "segment": "Int8 Rounding Mash",
+       "greeting": "", "runningText": "updating script…"}}},
+   "estimated_duration_s": 12},
+
+  {"beat_id": "B06", "act": "OUTPUT — revised", "role_note": "OPEN vox slot → Manim video",
+   "narration_text": "Re-run. The activation sine comes back — two-hundred-fifty-five levels, the curve recovered. Nothing about the tensor changed; only the scale it was measured against did.",
+   "visual_intent": "Manim: the same activation sine, now quantized per-channel, reconstructed faithfully — '255 levels recovered'",
+   "shot": {"type": "GRAPHIC", "source": "manim", "motion": "fade",
+     "manim": {"scene_class": "B06_PerChannel", "file": "scenes.py"}},
+   "estimated_duration_s": 12},
+
+  {"beat_id": "B07", "act": "SUMMARY", "role_note": "the lesson — one beat",
+   "narration_text": "So the damage was never int8 itself. It was one scale, set by the widest tensor, crushing the small-magnitude range where the signal actually lived. Per-channel gives each tensor its own ruler, and the signal survives.",
+   "visual_intent": "recap card: 'one scale for all -> mash' vs 'per-channel -> preserved'; the two output frames side by side",
+   "shot": {"type": "GRAPHIC", "source": null, "motion": "fade"},
+   "estimated_duration_s": 11},
+
+  {"beat_id": "B08", "act": "NEXT STEPS", "role_note": "HANDOFF LAW — suggested prompt typed in, viewer-addressed",
+   "narration_text": "Your move: take this prompt, run it on your own model — dump a real activation tensor and see which layers live near the rounding floor. And when your deploy toolchain quantizes, check whether it picked per-channel. If it didn't, that's where your accuracy went.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeComposerAsk", "props": {
+       "command": "claude \"dump one activation tensor from my model, quantize it int8 per-tensor AND per-channel, and report the level count for each\"",
+       "topic": "CLAUDE CODE · QUANTIZATION", "segment": "Int8 Rounding Mash",
+       "greeting": "Your turn.", "runningText": "paste this into Claude…"}}},
+   "estimated_duration_s": 10},
+
+  {"beat_id": "B09", "act": "OUTRO", "role_note": "OUTRO LAW — restate the episode title",
+   "narration_text": "Watch int8 rounding mash your activations. Nik Bear Brown — build it with Claude, then take it apart.",
+   "shot": {"type": "GRAPHIC", "source": "remotion", "motion": "fade",
+     "remotion": {"pattern": "ClaudeTitleOutro", "props": {
+       "title": "Watch int8 Rounding Mash Your Activations.",
+       "handle": "@NikBearBrown", "subline": "built with Claude, taken apart"}}},
+   "estimated_duration_s": 8}
+ ]
+}

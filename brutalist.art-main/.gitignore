@@ -1,0 +1,53 @@
+# Kokoro model weights (~340MB — over GitHub's 100MB file limit).
+# ./setup --install downloads them; or fetch manually from
+# github.com/thewh1teagle/kokoro-onnx releases (model-files-v1.0).
+runtime/models/kokoro/*.onnx
+runtime/models/kokoro/*.bin
+
+# per-machine / regenerable
+node_modules/
+runtime/remotion/node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+_qc/
+
+# editor / script backups
+*.bak
+*.bak-*
+
+# abandoned agent worktree (a full copy of this repo — never a commit)
+.claude/worktrees/
+
+# stale git index.lock files: this tree is sometimes reached over a mount that
+# refuses unlink(), so git cannot clean up its own lock and every later write
+# fails with "Unable to create index.lock". Move the lock here, don't commit it.
+_stale_git_locks/
+
+# strip_spark.py's pre-strip safety copy — reversibility scaffolding, not source
+runtime/remotion/.spark-strip-backup/
+
+# pre-edit safety copies
+*.pre-spec-fix
+
+# local keys — never commit
+.env
+
+# Rendered masters — brutalist.art renders here by default (ART_OUT overrides).
+renders/
+
+# ── svg/ — 12 GB, 2.4 M files. NEVER pushed. ─────────────────────────────────
+# Bulk upstream icon libraries (material-design-icons 9.1G, tabler, RemixIcon,
+# lucide, heroicons, feather, iconoir…) are re-downloadable from upstream and
+# must not enter git history — GitHub caps a file at 100 MB and a repo at 5 GB.
+# NOTE: skills DO reference `svg/svg/images/` (~1,500 PNGs, 2.1 GB) + icons.json
+# as shipped still stock. That needs a real distribution decision (Git LFS, a
+# fetch script, or a slimmed set) — it is deliberately NOT shipped via git today.
+/svg/
+
+# stray backup of the entry point
+art.pre-scene-search
+
+# generated per-render: maps components -> the reels that used them.
+# Records reel paths that live OUTSIDE this repo; never ship it.
+/runtime/remotion/_bench/

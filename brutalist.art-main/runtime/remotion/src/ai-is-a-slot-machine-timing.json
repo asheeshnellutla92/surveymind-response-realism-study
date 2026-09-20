@@ -1,0 +1,42 @@
+[
+  {
+    "id": "B00",
+    "frames": 844,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B00.mp3"
+  },
+  {
+    "id": "B01",
+    "frames": 870,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B01.mp3"
+  },
+  {
+    "id": "B02",
+    "frames": 683,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B02.mp3"
+  },
+  {
+    "id": "B03",
+    "frames": 742,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B03.mp3"
+  },
+  {
+    "id": "B04",
+    "frames": 833,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B04.mp3"
+  },
+  {
+    "id": "B05",
+    "frames": 804,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B05.mp3"
+  },
+  {
+    "id": "B06",
+    "frames": 172,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B06.mp3"
+  },
+  {
+    "id": "B07",
+    "frames": 109,
+    "audio": "ai-is-a-slot-machine-mp3/beat-B07.mp3"
+  }
+]

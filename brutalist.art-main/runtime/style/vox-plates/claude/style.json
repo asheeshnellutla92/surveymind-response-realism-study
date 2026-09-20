@@ -1,0 +1,24 @@
+{
+  "_comment": "Style knobs for art fill-pantry, claude-liam channel. Two ways to guide the look: (1) reference PLATES (vox-plate-*.png) for the flux/higgsfield backends; (2) named STYLE_MODIFIERS (text suffix + --profile) for the midjourney backend. A per-reel <slug>/style/style.json or per-book <book>/youtube/_style/style.json overrides any key.",
+  "model": "flux-kontext",
+  "credits_per_gen": 1,
+  "max_tries": 3,
+  "negative_prompt": "text, letters, numbers, words, captions, logos, watermarks, real people, recognizable faces, named places, brand marks, UI, charts with data",
+  "archetype_keywords": {
+    "portrait": ["figure", "person", "silhouette", "hand", "face", "seated", "reader", "student"],
+    "scene": ["room", "interior", "landscape", "wide", "wall", "library", "cluster", "hall", "desk"],
+    "object": ["object", "artifact", "device", "book", "chip", "close-up", "still life", "tool"]
+  },
+
+  "default_style_type": "artsy",
+  "style_modifiers": {
+    "artsy": {
+      "suffix": "3D sculpture",
+      "params": "--ar 16:9 --profile ytob5vr 7dkile2 5l34wh8 x9o4m9g"
+    },
+    "photo": {
+      "suffix": "1980s aesthetic, iPhone photography in the style of William Eggleston",
+      "params": "--ar 16:9 --profile 9vpvb2l 44qs9jw"
+    }
+  }
+}
